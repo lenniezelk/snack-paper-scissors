@@ -30,5 +30,11 @@ embedded_instances {
   "  data: \"collection: \\\"/main/prelude.collection\\\"\\n"
   "\"\n"
   "}\n"
+  "embedded_components {\n"
+  "  id: \"results\"\n"
+  "  type: \"collectionproxy\"\n"
+  "  data: \"collection: \\\"/main/results.collection\\\"\\n"
+  "\"\n"
+  "}\n"
   ""
 }

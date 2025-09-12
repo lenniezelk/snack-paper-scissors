@@ -6,5 +6,9 @@ embedded_instances {
   "  id: \"rivemodel\"\n"
   "  component: \"/assets/results.rivemodel\"\n"
   "}\n"
+  "components {\n"
+  "  id: \"results\"\n"
+  "  component: \"/main/results.script\"\n"
+  "}\n"
   ""
 }

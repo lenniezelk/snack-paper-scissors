@@ -1,5 +1,5 @@
 local global = require("main.global")
-local round_anim_period = 2
+
 local celebrate_anim_period = 1
 
 local function show_enemy_choice(self)
@@ -17,7 +17,7 @@ end
 
 local function go_to_result(self)
 	global.calculate_final_result()
-	msg.post("loader:/go#loader", "go_to_result")
+	msg.post("loader:/go#loader", "go_to_results")
 end
 
 local function go_to_next_round(self)
@@ -59,9 +59,12 @@ local function rive_event_handler(self, message_id, message)
 	show_enemy_choice(self)
 	celebrate_win(self)
 	if global.is_round_over() then
+		print("Round Over")
 		if global.is_final_round() then
+			print("Game Over")
 			go_to_result(self)
 		else
+			print("Game Continues")
 			go_to_next_round(self)
 		end
 	end

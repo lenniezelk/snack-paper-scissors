@@ -100,7 +100,7 @@ function M.is_round_over()
 end
 
 function M.is_final_round()
-    return M.game_state.round == M.game_state.total_rounds
+    return M.game_state.round >= M.game_state.total_rounds
 end
 
 function M.advance_to_next_round()
