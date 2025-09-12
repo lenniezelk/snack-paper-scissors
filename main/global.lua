@@ -13,7 +13,6 @@ end
 
 -- Game state object
 M.game_state = {
-    state = 'ROUND', -- ROUND, PLAY, RESULT
     player_choice = nil,
     enemy_choice = nil,
     result = nil,
@@ -109,10 +108,6 @@ function M.advance_to_next_round()
     M.game_state.player_choice = nil
     M.game_state.enemy_choice = nil
     M.game_state.result = nil
-end
-
-function M.set_state(new_state)
-    M.game_state.state = new_state
 end
 
 function M.update_state(updates)
