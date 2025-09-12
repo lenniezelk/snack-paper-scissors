@@ -10,5 +10,9 @@ embedded_instances {
   "  id: \"rivemodel\"\n"
   "  component: \"/assets/gameplay.rivemodel\"\n"
   "}\n"
+  "components {\n"
+  "  id: \"player-select\"\n"
+  "  component: \"/main/player-select.sound\"\n"
+  "}\n"
   ""
 }

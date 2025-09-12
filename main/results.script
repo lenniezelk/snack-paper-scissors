@@ -2,9 +2,19 @@ local global = require("main.global")
 
 function rive_event_handler(self, message_id, message)
 	if message.name == 'Replay Clicked' then
-		global.reset_game_state()
-		global.update_state({ level = 'results' })
-		msg.post("loader:/go#loader", "go_to_main_menu")
+		sound.play("#btn-click")
+		timer.delay(0.3, false, function()
+			global.reset_game_state()
+			global.update_state({ level = 'results' })
+			msg.post("loader:/go#loader", "go_to_round")
+		end)
+	elseif message.name == 'Main Menu Clicked' then
+		sound.play("#btn-click")
+		timer.delay(0.3, false, function()
+			global.reset_game_state()
+			global.update_state({ level = 'results' })
+			msg.post("loader:/go#loader", "go_to_main_menu")
+		end)
 	end
 end
 
@@ -17,6 +27,8 @@ function init(self)
 	rive.databind.set_view_model_instance_runtime("#rivemodel", self.handle)
 	rive.databind.set_properties('#rivemodel', self.handle, {
 		['text'] = global.game_state.result == 'WON' and "You Won!" or "You Lost!",
+		["main menu button/text"] = "Main Menu",
+		["replay button/text"] = "Play Again",
 	})
 end
 

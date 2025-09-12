@@ -2,9 +2,12 @@ local global = require("main.global")
 
 local function rive_event_handler(self, message_id, message)
 	if message.name == "Play Btn Clicked" then
-		global.reset_game_state()
-		global.update_state({ level = 'main_menu' })
-		msg.post("loader:/go#loader", "go_to_prelude")
+		sound.play("#btn-click")
+		timer.delay(0.3, false, function()
+			global.reset_game_state()
+			global.update_state({ level = 'main_menu' })
+			msg.post("loader:/go#loader", "go_to_prelude")
+		end)
 	elseif message.name == "Settings Btn Clicked" then
 		print("Settings button clicked - functionality not implemented yet.")
 	else
@@ -18,6 +21,12 @@ function init(self)
 
 	msg.post(".", "acquire_input_focus")
 	rive.play_state_machine("#rivemodel", "State Machine 1", nil, rive_event_handler)
+	local vm = rive.databind.create_view_model_instance_runtime("#rivemodel", "Main Menu")
+	rive.databind.set_view_model_instance_runtime("#rivemodel", vm)
+	rive.databind.set_properties('#rivemodel', vm, {
+		['settings button/text'] = "Settings",
+		['play button/text'] = "Play",
+	})
 end
 
 function on_input(self, action_id, action)

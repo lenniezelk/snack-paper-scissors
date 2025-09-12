@@ -1,12 +1,13 @@
 local global = require("main.global")
 
-local delay = 5
-
 local function rive_event_handler(self, message_id, message)
 	if message.name == "Prelude Skip Clicked" then
-		global.reset_game_state()
-		global.update_state({ level = 'prelude' })
-		msg.post("loader:/go#loader", "go_to_round")
+		sound.play("#btn-click")
+		timer.delay(0.3, false, function()
+			global.reset_game_state()
+			global.update_state({ level = 'prelude' })
+			msg.post("loader:/go#loader", "go_to_round")
+		end)
 	else
 		print("Unhandled rive event: " .. message.name)
 	end
@@ -16,11 +17,11 @@ function init(self)
 	global.set_background_color("FFEFC3")
 	msg.post(".", "acquire_input_focus")
 	rive.play_state_machine("#rivemodel", "State Machine 1", nil, rive_event_handler)
-	timer.delay(delay, false, function()
-		global.reset_game_state()
-		global.update_state({ level = 'prelude' })
-		msg.post("loader:/go#loader", "go_to_round")
-	end)
+	self.handle = rive.databind.create_view_model_instance_runtime("#rivemodel", "Prelude")
+	rive.databind.set_view_model_instance_runtime("#rivemodel", self.handle)
+	rive.databind.set_properties('#rivemodel', self.handle, {
+		['next button/text'] = "Next",
+	})
 end
 
 function on_input(self, action_id, action)

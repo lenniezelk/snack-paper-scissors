@@ -49,6 +49,7 @@ end
 
 local function rive_event_handler(self, message_id, message)
 	hide_enemy_choice(self)
+	sound.play("#player-select")
 	if message.name == 'Paper Btn Clicked' then
 		global.handle_player_choice('PAPER')
 	elseif message.name == 'Rock Btn Clicked' then
@@ -59,13 +60,14 @@ local function rive_event_handler(self, message_id, message)
 	show_enemy_choice(self)
 	celebrate_win(self)
 	if global.is_round_over() then
-		print("Round Over")
 		if global.is_final_round() then
-			print("Game Over")
-			go_to_result(self)
+			timer.delay(0.3, false, function()
+				go_to_result(self)
+			end)
 		else
-			print("Game Continues")
-			go_to_next_round(self)
+			timer.delay(0.3, false, function()
+				go_to_next_round(self)
+			end)
 		end
 	end
 end
