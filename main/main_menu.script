@@ -1,0 +1,33 @@
+local global = require("main.global")
+
+local function rive_event_handler(self, message_id, message)
+	if message.name == "Play Btn Clicked" then
+		global.reset_game_state()
+		global.update_state({ level = 'main_menu' })
+		msg.post("loader:/go#loader", "go_to_prelude")
+	elseif message.name == "Settings Btn Clicked" then
+		print("Settings button clicked - functionality not implemented yet.")
+	else
+		print("Unhandled rive event: " .. message.name)
+	end
+end
+
+function init(self)
+	-- Set background color using utility method
+	global.set_background_color("FFEFC3")
+
+	msg.post(".", "acquire_input_focus")
+	rive.play_state_machine("#rivemodel", "State Machine 1", nil, rive_event_handler)
+end
+
+function on_input(self, action_id, action)
+	if not action_id or action_id == hash("touch") then
+		if action.pressed then
+			rive.pointer_down("#rivemodel", action.x, action.y)
+		elseif action.released then
+			rive.pointer_up("#rivemodel", action.x, action.y)
+		else
+			rive.pointer_move("#rivemodel", action.x, action.y)
+		end
+	end
+end

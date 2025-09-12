@@ -1,0 +1,10 @@
+local global = require("main.global")
+
+function rive_event_handler(self, message_id, message)
+	print("Unhandled rive event: " .. message.name)
+end
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	rive.play_state_machine("#rivemodel", "State Machine 1", nil, rive_event_handler)
+end

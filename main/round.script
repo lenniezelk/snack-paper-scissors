@@ -1,0 +1,36 @@
+local global = require("main.global")
+
+local delay = 2
+
+local function rive_event_handler(self, message_id, message)
+	print("Unhandled rive event: " .. message.name)
+end
+
+function init(self)
+	-- Set background color using utility method
+	global.set_background_color("FFEFC3")
+
+	msg.post(".", "acquire_input_focus")
+	rive.play_state_machine("#rivemodel", "State Machine 1", nil, rive_event_handler)
+	local vm = rive.databind.create_view_model_instance_runtime("#rivemodel", "Round")
+	rive.databind.set_view_model_instance_runtime("#rivemodel", vm)
+	rive.databind.set_properties('#rivemodel', vm, {
+		['text'] = ("Round %d"):format(global.game_state.round),
+	})
+
+	timer.delay(delay, false, function()
+		msg.post("loader:/go#loader", "go_to_main")
+	end)
+end
+
+function on_input(self, action_id, action)
+	if not action_id or action_id == hash("touch") then
+		if action.pressed then
+			rive.pointer_down("#rivemodel", action.x, action.y)
+		elseif action.released then
+			rive.pointer_up("#rivemodel", action.x, action.y)
+		else
+			rive.pointer_move("#rivemodel", action.x, action.y)
+		end
+	end
+end

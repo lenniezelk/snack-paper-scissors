@@ -1,0 +1,14 @@
+name: "main_menu"
+scale_along_z: 0
+embedded_instances {
+  id: "go"
+  data: "components {\n"
+  "  id: \"rivemodel\"\n"
+  "  component: \"/assets/main menu.rivemodel\"\n"
+  "}\n"
+  "components {\n"
+  "  id: \"main_menu\"\n"
+  "  component: \"/main/main_menu.script\"\n"
+  "}\n"
+  ""
+}

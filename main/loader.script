@@ -1,0 +1,14 @@
+local global = require("main.global")
+
+function init(self)
+	-- Set background color using utility method
+	global.set_background_color("FFEFC3")
+
+	msg.post(".", "acquire_input_focus")
+	global.reset_game_state()
+	msg.post(".", "go_to_main_menu")
+end
+
+function on_message(self, message_id, message, sender)
+	global.handle_messages(message_id, message, sender)
+end

@@ -1,0 +1,6 @@
+scene: "/assets/snack-paper-scissors.rivescene"
+default_animation: ""
+material: "/defold-rive/assets/rivemodel.material"
+artboard: "Round"
+coordinate_system: COORDINATE_SYSTEM_RIVE
+artboard_fit: FIT_CONTAIN

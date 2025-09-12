@@ -1,0 +1,14 @@
+name: "prelude"
+scale_along_z: 0
+embedded_instances {
+  id: "go"
+  data: "components {\n"
+  "  id: \"rivemodel\"\n"
+  "  component: \"/assets/prelude.rivemodel\"\n"
+  "}\n"
+  "components {\n"
+  "  id: \"prelude\"\n"
+  "  component: \"/main/prelude.script\"\n"
+  "}\n"
+  ""
+}

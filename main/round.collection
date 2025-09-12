@@ -1,0 +1,20 @@
+name: "round"
+scale_along_z: 0
+embedded_instances {
+  id: "go"
+  data: "components {\n"
+  "  id: \"rivemodel\"\n"
+  "  component: \"/assets/round.rivemodel\"\n"
+  "}\n"
+  "components {\n"
+  "  id: \"round\"\n"
+  "  component: \"/main/round.script\"\n"
+  "}\n"
+  "embedded_components {\n"
+  "  id: \"main\"\n"
+  "  type: \"collectionproxy\"\n"
+  "  data: \"collection: \\\"/main/main.collection\\\"\\n"
+  "\"\n"
+  "}\n"
+  ""
+}

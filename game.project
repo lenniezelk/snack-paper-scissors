@@ -1,5 +1,5 @@
 [bootstrap]
-main_collection = /main/main.collectionc
+main_collection = /main/loader.collectionc
 render = /defold-rive/lua/rive.renderc
 
 [script]
@@ -18,7 +18,7 @@ scale_mode = stretch
 
 [project]
 title = Snack, Paper, Scissors
-dependencies#0 = https://github.com/defold/extension-rive/archive/refs/tags/6.2.1.zip
+dependencies#0 = https://github.com/defold/extension-rive/archive/refs/tags/7.3.0.zip
 
 [graphics]
 opengl_version_hint = 42

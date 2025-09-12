@@ -1,146 +1,80 @@
+local global = require("main.global")
 local round_anim_period = 2
+local celebrate_anim_period = 1
 
-local function random_pick()
-	local choices = { "ROCK", "PAPER", "SCISSORS" }
-	return choices[math.random(#choices)]
-end
-
-local function determine_winner(player_choice, enemy_choice)
-	if player_choice == enemy_choice then
-		return "DRAW"
-	elseif (player_choice == "ROCK" and enemy_choice == "SCISSORS") or
-		(player_choice == "PAPER" and enemy_choice == "ROCK") or
-		(player_choice == "SCISSORS" and enemy_choice == "PAPER") then
-		return "PLAYER"
-	else
-		return "ENEMY"
-	end
-end
-
-local function enemy_choice(self)
-	self.game_state.enemy_choice = random_pick()
-end
-
-local function handle_player_choice(self, player_choice)
-	self.game_state.player_choice = player_choice
-	enemy_choice(self)
-	local winner = determine_winner(self.game_state.player_choice, self.game_state.enemy_choice)
-	if winner == "PLAYER" then
-		self.game_state.result = 'WON'
-		self.game_state.player_wins = self.game_state.player_wins + 1
-	elseif winner == "ENEMY" then
-		self.game_state.result = 'LOST'
-		self.game_state.enemy_wins = self.game_state.enemy_wins + 1
-	else
-		self.game_state.result = 'DRAW'
-		self.game_state.draws = self.game_state.draws + 1
-	end
-	self.game_state.current_play = self.game_state.current_play + 1
-end
-
-local function update_enemy_choice(self)
+local function show_enemy_choice(self)
 	rive.databind.set_properties('#rivemodel', self.handle, {
-		['enemy/state'] = self.game_state.enemy_choice,
+		['enemy selection/isVisible'] = true,
+		['enemy selection/selection'] = global.game_state.enemy_choice,
 	})
 end
 
-local function update_result(self)
-	-- check who won in the 3 rounds and update rive state machine
-	if self.game_state.player_wins > self.game_state.enemy_wins then
-		self.game_state.result = 'WON'
-	elseif self.game_state.player_wins < self.game_state.enemy_wins then
-		self.game_state.result = 'LOST'
-	else
-		self.game_state.result = 'DRAW'
-	end
+local function hide_enemy_choice(self)
 	rive.databind.set_properties('#rivemodel', self.handle, {
-		['result/state'] = self.game_state.result,
+		['enemy selection/isVisible'] = false,
 	})
 end
 
-local function check_round_over(self)
-	if self.game_state.current_play > self.game_state.total_plays_per_round then
-		-- Round over, update round state
-		if self.game_state.round == 'ONE' then
-			self.game_state.round = 'TWO'
-		elseif self.game_state.round == 'TWO' then
-			self.game_state.round = 'THREE'
-		else
-			self.game_state.round = 'ONE'
-			self.game_state.state = 'RESULT'
-			update_result(self)
-			rive.databind.set_properties('#rivemodel', self.handle, {
-				['state'] = self.game_state.state,
-				['round/state'] = self.game_state.round,
-			})
-			return
-		end
-		self.game_state.current_play = 1
-		self.game_state.state = 'ROUND'
+local function go_to_result(self)
+	global.calculate_final_result()
+	msg.post("loader:/go#loader", "go_to_result")
+end
+
+local function go_to_next_round(self)
+	global.advance_to_next_round()
+	msg.post("loader:/go#loader", "go_to_round")
+end
+
+local function celebrate_win(self)
+	if global.game_state.result == 'WON' then
 		rive.databind.set_properties('#rivemodel', self.handle, {
-			['state'] = self.game_state.state,
-			['round/state'] = self.game_state.round,
+			['bunny/celebrate/isCelebrating'] = true,
 		})
-		timer.delay(round_anim_period, false, function()
-			self.game_state.state = 'PLAY'
+		timer.delay(celebrate_anim_period, false, function()
 			rive.databind.set_properties('#rivemodel', self.handle, {
-				['state'] = self.game_state.state,
+				['bunny/celebrate/isCelebrating'] = false,
+			})
+		end)
+	elseif global.game_state.result == 'LOST' then
+		rive.databind.set_properties('#rivemodel', self.handle, {
+			['froggy/celebrate/isCelebrating'] = true,
+		})
+		timer.delay(celebrate_anim_period, false, function()
+			rive.databind.set_properties('#rivemodel', self.handle, {
+				['froggy/celebrate/isCelebrating'] = false,
 			})
 		end)
 	end
 end
 
--- Rive events trigger when the rivemodel intro starts and ends and is used to not allow input while the intro is playing.
--- The logic is done within the rive statemachine.
 local function rive_event_handler(self, message_id, message)
+	hide_enemy_choice(self)
 	if message.name == 'Paper Btn Clicked' then
-		handle_player_choice(self, 'PAPER')
+		global.handle_player_choice('PAPER')
 	elseif message.name == 'Rock Btn Clicked' then
-		handle_player_choice(self, 'ROCK')
+		global.handle_player_choice('ROCK')
 	elseif message.name == 'Scissors Btn Clicked' then
-		handle_player_choice(self, 'SCISSORS')
+		global.handle_player_choice('SCISSORS')
 	end
-	update_enemy_choice(self)
-	check_round_over(self)
+	show_enemy_choice(self)
+	celebrate_win(self)
+	if global.is_round_over() then
+		if global.is_final_round() then
+			go_to_result(self)
+		else
+			go_to_next_round(self)
+		end
+	end
 end
 
-
-
-
--- Get input focus then start the rivemodel statemachine.
 function init(self)
-	self.game_state = {
-		state = 'ROUND', -- ROUND, PLAY, RESULT
-		player_choice = nil,
-		enemy_choice = nil,
-		result = nil,
-		round = 'ONE', -- ONE, TWO, THREE
-		player_wins = 0,
-		enemy_wins = 0,
-		draws = 0,
-		total_rounds = 3,
-		total_plays_per_round = 3,
-		current_play = 1,
-	}
+	-- Set background color using utility method
+	global.set_background_color("FFEFC3")
+	global.update_state({ level = 'main' })
 	msg.post(".", "acquire_input_focus")
 	rive.play_state_machine("#rivemodel", "State Machine 1", nil, rive_event_handler)
 	self.handle = rive.databind.create_view_model_instance_runtime("#rivemodel", "GamePlay")
 	rive.databind.set_view_model_instance_runtime("#rivemodel", self.handle)
-	rive.databind.set_properties('#rivemodel', self.handle, {
-		['result/state'] = 'IDLE',
-		['enemy/state'] = 'IDLE',
-		['scissors button/state'] = 'SCISSORS',
-		['rock button/state'] = 'ROCK',
-		['paper button/state'] = 'PAPER',
-		['state'] = self.game_state.state,
-		['round/state'] = self.game_state.round,
-	})
-	timer.delay(round_anim_period, false, function()
-		self.game_state.state = 'PLAY'
-		rive.databind.set_properties('#rivemodel', self.handle, {
-			['state'] = self.game_state.state,
-		})
-	end)
 end
 
 -- Enable rive input for the model.
