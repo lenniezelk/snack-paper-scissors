@@ -14,5 +14,13 @@ embedded_instances {
   "  id: \"player-select\"\n"
   "  component: \"/main/player-select.sound\"\n"
   "}\n"
+  "components {\n"
+  "  id: \"answer-correct\"\n"
+  "  component: \"/main/answer-correct.sound\"\n"
+  "}\n"
+  "components {\n"
+  "  id: \"answer-wrong\"\n"
+  "  component: \"/main/answer-wrong.sound\"\n"
+  "}\n"
   ""
 }

@@ -18,6 +18,16 @@ function rive_event_handler(self, message_id, message)
 	end
 end
 
+local function get_text_for_result()
+	if global.game_state.result == 'WON' then
+		return "You Won!"
+	elseif global.game_state.result == 'DRAW' then
+		return "It's a Draw!"
+	else
+		return "You Lost!"
+	end
+end
+
 function init(self)
 	global.set_background_color("FFEFC3")
 	msg.post(".", "acquire_input_focus")
@@ -26,10 +36,15 @@ function init(self)
 	self.handle = rive.databind.create_view_model_instance_runtime("#rivemodel", "Result")
 	rive.databind.set_view_model_instance_runtime("#rivemodel", self.handle)
 	rive.databind.set_properties('#rivemodel', self.handle, {
-		['text'] = global.game_state.result == 'WON' and "You Won!" or "You Lost!",
+		['text'] = get_text_for_result(),
 		["main menu button/text"] = "Main Menu",
 		["replay button/text"] = "Play Again",
 	})
+	if global.game_state.result == 'WON' then
+		sound.play("#results-won")
+	else
+		sound.play("#results-lost")
+	end
 end
 
 function on_input(self, action_id, action)

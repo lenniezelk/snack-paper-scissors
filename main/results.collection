@@ -14,5 +14,13 @@ embedded_instances {
   "  id: \"btn-click\"\n"
   "  component: \"/main/btn-click.sound\"\n"
   "}\n"
+  "components {\n"
+  "  id: \"results-lost\"\n"
+  "  component: \"/main/results-lost.sound\"\n"
+  "}\n"
+  "components {\n"
+  "  id: \"results-won\"\n"
+  "  component: \"/main/results-won.sound\"\n"
+  "}\n"
   ""
 }

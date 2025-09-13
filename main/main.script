@@ -27,6 +27,7 @@ end
 
 local function celebrate_win(self)
 	if global.game_state.result == 'WON' then
+		sound.play("#answer-correct")
 		rive.databind.set_properties('#rivemodel', self.handle, {
 			['bunny/celebrate/isCelebrating'] = true,
 		})
@@ -36,6 +37,7 @@ local function celebrate_win(self)
 			})
 		end)
 	elseif global.game_state.result == 'LOST' then
+		sound.play("#answer-wrong")
 		rive.databind.set_properties('#rivemodel', self.handle, {
 			['froggy/celebrate/isCelebrating'] = true,
 		})
