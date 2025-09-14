@@ -2,6 +2,23 @@ local M = {}
 
 local world_template = "#%s"
 
+math.randomseed(os.time())
+
+local prelude_conversation = {
+    { ["character"] = "BUNNY",  ["text"] = "Hi Froggy! Lets go to the park for a picnic." },
+    { ["character"] = "FROGGY", ["text"] = "Hi Bunny!, Sounds fun! What should we bring?" },
+    { ["character"] = "BUNNY",  ["text"] = "How about some snacks? I love playing games too!" },
+    { ["character"] = "NONE",   ["text"] = "At the park..." },
+    { ["character"] = "FROGGY", ["text"] = "Yum... Yum..." },
+    { ["character"] = "BUNNY",  ["text"] = "These snacks are delicious!" },
+    { ["character"] = "NONE",   ["text"] = "Bunny opens cooler..." },
+    { ["character"] = "BUNNY",  ["text"] = "What!!! Just one icecream left?" },
+    { ["character"] = "FROGGY", ["text"] = "Aww... I was looking forward to that." },
+    { ["character"] = "BUNNY",  ["text"] = "How about we play a game to decide who gets the icecream?" },
+    { ["character"] = "FROGGY", ["text"] = "Great idea! Let's play Rock, Paper, Scissors!" },
+    { ["character"] = "BUNNY",  ["text"] = "Great! Let's play!" },
+}
+
 function M.load_world(name)
     M.game_state.previous_level = M.game_state.level
     M.game_state.level = name
@@ -25,7 +42,17 @@ M.game_state = {
     current_play = 1,
     level = "loader",
     previous_level = nil,
+    conversation_index = 0,
 }
+
+function M.get_current_conversation()
+    M.game_state.conversation_index = M.game_state.conversation_index + 1
+    return prelude_conversation[M.game_state.conversation_index]
+end
+
+function M.is_conversation_done()
+    return M.game_state.conversation_index >= #prelude_conversation
+end
 
 -- Helper functions
 local function random_pick()
@@ -60,6 +87,7 @@ function M.reset_game_state()
         total_rounds = 3,
         total_plays_per_round = 3,
         current_play = 1,
+        conversation_index = 0,
     }
 end
 

@@ -1,37 +1,69 @@
 local global = require("main.global")
 
+local function set_next_chat(self)
+	local current_conversation = global.get_current_conversation()
+	local chatListVMI = rive.databind.create_view_model_instance_runtime(self.rive_model, "Chat List Item")
+	rive.databind.set_properties(self.rive_model, chatListVMI, {
+		['text'] = current_conversation["text"],
+		['right character'] = current_conversation["character"] == "FROGGY" and "FROGGY" or "NONE",
+		['left character'] = current_conversation["character"] == "BUNNY" and "BUNNY" or "NONE",
+	})
+	rive.databind.list_add_instance(self.rive_model, self.mainVMI, "chat", chatListVMI)
+	rive.databind.set_properties(self.rive_model, self.mainVMI, {
+		['scroll index'] = global.game_state.conversation_index - 1,
+	})
+end
+
+local function skip()
+	timer.delay(0.3, false, function()
+		global.reset_game_state()
+		global.update_state({ level = 'prelude' })
+		msg.post("loader:/go#loader", "go_to_round")
+	end)
+end
+
+local function next_chat(self)
+	set_next_chat(self)
+end
+
 local function rive_event_handler(self, message_id, message)
-	if message.name == "Prelude Skip Clicked" then
+	if message.name == "Skip Clicked" then
 		sound.play("#btn-click")
-		timer.delay(0.3, false, function()
-			global.reset_game_state()
-			global.update_state({ level = 'prelude' })
-			msg.post("loader:/go#loader", "go_to_round")
-		end)
-	else
-		print("Unhandled rive event: " .. message.name)
+		skip()
+	elseif message.name == "Next Clicked" then
+		sound.play("#btn-click")
+		if global.is_conversation_done() then
+			skip()
+		else
+			next_chat(self)
+		end
 	end
 end
+
+
 
 function init(self)
 	global.set_background_color("FFEFC3")
 	msg.post(".", "acquire_input_focus")
-	rive.play_state_machine("#rivemodel", "State Machine 1", nil, rive_event_handler)
-	self.handle = rive.databind.create_view_model_instance_runtime("#rivemodel", "Prelude")
-	rive.databind.set_view_model_instance_runtime("#rivemodel", self.handle)
-	rive.databind.set_properties('#rivemodel', self.handle, {
+	self.rive_model = msg.url("#rivemodel")
+	rive.play_state_machine(self.rive_model, "State Machine 1", nil, rive_event_handler)
+	self.mainVMI = rive.databind.create_view_model_instance_runtime(self.rive_model, "Prelude")
+	rive.databind.set_view_model_instance_runtime(self.rive_model, self.mainVMI)
+	rive.databind.set_properties(self.rive_model, self.mainVMI, {
 		['next button/text'] = "Next",
+		['skip button/text'] = "Skip",
 	})
+	set_next_chat(self)
 end
 
 function on_input(self, action_id, action)
 	if not action_id or action_id == hash("touch") then
 		if action.pressed then
-			rive.pointer_down("#rivemodel", action.x, action.y)
+			rive.pointer_down(self.rive_model, action.x, action.y)
 		elseif action.released then
-			rive.pointer_up("#rivemodel", action.x, action.y)
+			rive.pointer_up(self.rive_model, action.x, action.y)
 		else
-			rive.pointer_move("#rivemodel", action.x, action.y)
+			rive.pointer_move(self.rive_model, action.x, action.y)
 		end
 	end
 end
