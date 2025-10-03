@@ -2,6 +2,8 @@ local M = {}
 
 local world_template = "#%s"
 
+local os_type = sys.get_sys_info().system_name
+
 math.randomseed(os.time())
 
 local prelude_conversation = {
@@ -181,6 +183,38 @@ M.handle_messages = function(message_id, message, sender)
     elseif message_id == hash("go_to_prelude") then
         M.load_world("prelude")
     end
+end
+
+M.poki_commercial_break = function(callback)
+    if os_type ~= "HTML5" then
+        if callback then
+            callback()
+        end
+        return
+    end
+    sound.set_group_gain("master", 0)
+    local ad_callback = function()
+        print("Poki commercial break finished")
+        sound.set_group_gain("master", 1.0)
+        if callback then
+            callback()
+        end
+    end
+    poki_sdk.commercial_break(ad_callback)
+end
+
+M.poki_gameplay_start = function()
+    if os_type ~= "HTML5" then
+        return
+    end
+    poki_sdk.gameplay_start()
+end
+
+M.poki_gameplay_stop = function()
+    if os_type ~= "HTML5" then
+        return
+    end
+    poki_sdk.gameplay_stop()
 end
 
 return M

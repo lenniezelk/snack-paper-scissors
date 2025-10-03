@@ -5,3 +5,7 @@
 Thumbs.db
 *.der
 wasm-web
+arm64-android/*
+arm7-android/*
+*.keystore
+*.keystore.*

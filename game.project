@@ -12,6 +12,13 @@ high_dpi = 1
 
 [android]
 input_method = HiddenInputField
+package = com.teamwonderbeasts.snackpaperscissors
+app_icon_36x36 = /assets/AppIcons/android/icon_36.png
+app_icon_48x48 = /assets/AppIcons/android/mipmap-mdpi/ic_launcher_48.png
+app_icon_72x72 = /assets/AppIcons/android/mipmap-hdpi/ic_launcher_72.png
+app_icon_96x96 = /assets/AppIcons/android/mipmap-xhdpi/ic_launcher_96.png
+app_icon_144x144 = /assets/AppIcons/android/mipmap-xxhdpi/ic_launcher_144.png
+app_icon_192x192 = /assets/AppIcons/android/mipmap-xxxhdpi/ic_launcher_192.png
 
 [html5]
 scale_mode = stretch
@@ -19,7 +26,8 @@ scale_mode = stretch
 [project]
 title = Snack, Paper, Scissors
 dependencies#0 = https://github.com/defold/extension-rive/archive/refs/tags/7.3.0.zip
+dependencies#1 = https://github.com/defold/extension-poki-sdk/archive/refs/tags/3.0.0.zip
 
 [graphics]
-opengl_version_hint = 42
+opengl_version_hint = 0
 

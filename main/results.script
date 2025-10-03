@@ -3,10 +3,13 @@ local global = require("main.global")
 function rive_event_handler(self, message_id, message)
 	if message.name == 'Replay Clicked' then
 		sound.play("#btn-click")
-		timer.delay(0.3, false, function()
-			global.reset_game_state()
-			global.update_state({ level = 'results' })
-			msg.post("loader:/go#loader", "go_to_round")
+		global.poki_commercial_break(function()
+			global.poki_gameplay_start()
+			timer.delay(0.3, false, function()
+				global.reset_game_state()
+				global.update_state({ level = 'results' })
+				msg.post("loader:/go#loader", "go_to_round")
+			end)
 		end)
 	elseif message.name == 'Main Menu Clicked' then
 		sound.play("#btn-click")
@@ -69,6 +72,7 @@ function init(self)
 		["character"] = get_celebration_for_result(),
 	})
 	set_celebration_characters(self)
+	global.poki_gameplay_stop()
 	if global.game_state.result == 'WON' then
 		sound.play("#results-won")
 	else

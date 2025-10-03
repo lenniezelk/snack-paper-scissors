@@ -3,6 +3,7 @@ local global = require("main.global")
 local function rive_event_handler(self, message_id, message)
 	if message.name == "Play Btn Clicked" then
 		sound.play("#btn-click")
+		global.poki_gameplay_start()
 		timer.delay(0.3, false, function()
 			global.reset_game_state()
 			global.update_state({ level = 'main_menu' })
